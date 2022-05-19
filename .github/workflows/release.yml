@@ -20,7 +20,7 @@ jobs:
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
   android-opencv4:
-    runs-on: ubuntu-latest
+    container: ghcr.io/allread-mlt/native-sdk-devel:1.0.5
     env:
       OPENCV_VERSION: 4.5.4
       PACKAGENAME: opencv-mobile-4.5.4-android
@@ -93,7 +93,7 @@ jobs:
         path: ${{ env.PACKAGENAME }}.zip
 
   gcc9-4-opencv4:
-    runs-on: ubuntu-latest
+    container: ghcr.io/allread-mlt/native-sdk-devel:1.0.5
     env:
       OPENCV_VERSION: 4.5.4
       PACKAGENAME: opencv-mobile-4.5.4-gcc9-4
