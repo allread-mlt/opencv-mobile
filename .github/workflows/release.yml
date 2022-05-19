@@ -20,6 +20,7 @@ jobs:
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
   android-opencv4:
+    runs-on: ubuntu-latest
     container: ghcr.io/allread-mlt/native-sdk-devel:1.0.5
     env:
       OPENCV_VERSION: 4.5.4
@@ -44,7 +45,7 @@ jobs:
         cd opencv-${{ env.OPENCV_VERSION }}
         mkdir build-armeabi-v7a && cd build-armeabi-v7a
         cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI="armeabi-v7a" -DANDROID_ARM_NEON=ON -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
+            -DANDROID_ABI="armeabi-v7a" -DANDROID_ARM_NEON=ON -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
             -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release `cat ../../opencv4_cmake_options.txt` -DBUILD_opencv_world=OFF -DOPENCV_DISABLE_FILESYSTEM_SUPPORT=ON ..
         cmake --build . -j 2
         cmake --build . --target install
@@ -53,7 +54,7 @@ jobs:
         cd opencv-${{ env.OPENCV_VERSION }}
         mkdir build-arm64-v8a && cd build-arm64-v8a
         cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
+            -DANDROID_ABI="arm64-v8a" -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
             -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release `cat ../../opencv4_cmake_options.txt` -DBUILD_opencv_world=OFF -DOPENCV_DISABLE_FILESYSTEM_SUPPORT=ON ..
         cmake --build . -j 2
         cmake --build . --target install
@@ -62,7 +63,7 @@ jobs:
         cd opencv-${{ env.OPENCV_VERSION }}
         mkdir build-x86 && cd build-x86
         cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI="x86" -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
+            -DANDROID_ABI="x86" -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
             -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release `cat ../../opencv4_cmake_options.txt` -DBUILD_opencv_world=OFF -DOPENCV_DISABLE_FILESYSTEM_SUPPORT=ON ..
         cmake --build . -j 2
         cmake --build . --target install
@@ -71,7 +72,7 @@ jobs:
         cd opencv-${{ env.OPENCV_VERSION }}
         mkdir build-x86_64 && cd build-x86_64
         cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI="x86_64" -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
+            -DANDROID_ABI="x86_64" -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DANDROID_PLATFORM=android-21 -DANDROID_CPP_FEATURES="no-rtti no-exceptions" \
             -DCMAKE_INSTALL_PREFIX=install -DCMAKE_BUILD_TYPE=Release `cat ../../opencv4_cmake_options.txt` -DBUILD_opencv_world=OFF -DOPENCV_DISABLE_FILESYSTEM_SUPPORT=ON ..
         cmake --build . -j 2
         cmake --build . --target install
@@ -93,6 +94,7 @@ jobs:
         path: ${{ env.PACKAGENAME }}.zip
 
   gcc9-4-opencv4:
+    runs-on: ubuntu-latest
     container: ghcr.io/allread-mlt/native-sdk-devel:1.0.5
     env:
       OPENCV_VERSION: 4.5.4
@@ -161,79 +163,14 @@ jobs:
         asset_name: ${{ env.PACKAGENAME }}.zip
         asset_content_type: application/zip
 
-    - name: upload-ios-opencv4
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-4.5.4-ios
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
-        asset_content_type: application/zip
-
-    - name: upload-ios-opencv4-bitcode
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-4.5.4-ios-bitcode
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
-        asset_content_type: application/zip
-
-    - name: upload-armlinux-opencv4
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-4.5.4-armlinux
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
-        asset_content_type: application/zip
-
-    - name: upload-macos-opencv4
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-4.5.4-macos
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
-        asset_content_type: application/zip
-
-    - name: upload-ubuntu-1804-opencv4
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-4.5.4-ubuntu-1804
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
-        asset_content_type: application/zip
-
     - name: upload-gcc9-4-opencv4
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-4.5.4-gcc9-4-opencv4
+        PACKAGENAME: opencv-mobile-4.5.4-gcc9-4
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
         asset_name: ${{ env.PACKAGENAME }}.zip
         asset_content_type: application/zip
 
-    - name: upload-ubuntu-2004-opencv4
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-4.5.4-ubuntu-2004
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
-        asset_content_type: application/zip
